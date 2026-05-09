@@ -166,6 +166,16 @@ function validateCartQuantity(quantity) {
 function generateOrderId() {
   // 請實作此函式
   // 提示：可以用 Date.now().toString(36) + Math.random().toString(36).slice(2)
+  const orderId = Math.random().toString(36).slice(2, 10);
+  return `ORD-${orderId}`;
+
+  /* 其他方式 UUID
+  環境支援 crypto.randomUUID()
+  ---
+  function generateOrderId() {
+  return `ORD-${crypto.randomUUID()}`;
+  }
+  */
 }
 
 /**
@@ -174,6 +184,16 @@ function generateOrderId() {
  */
 function generateCartItemId() {
   // 請實作此函式
+  const cartId = Math.random().toString(36).slice(2, 10);
+  return `CART-${cartId}`;
+
+  /* 其他方式 UUID
+  環境支援 crypto.randomUUID()
+  ---
+  function generateCartItemId() {
+  return `CART-${crypto.randomUUID()}`;
+  }
+  */
 }
 
 // ========================================
