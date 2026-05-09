@@ -86,7 +86,7 @@ function getThisWeekOrders(orders) {
 /**
  * 1. 驗證訂單使用者資料
  * @param {Object} data - { name, tel, email, address, payment }
- * @returns {Object} - { isValid: boolean, errors: string[] }
+ * @returns {Object} - 
  *
  * 驗證規則：
  * - name: 不可為空
@@ -97,6 +97,35 @@ function getThisWeekOrders(orders) {
  */
 function validateOrderUser(data) {
   // 請實作此函式
+  const errors = []; 
+  const telRegex = /^09\d{8}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const validPayments = ["ATM", "Credit Card", "Apple Pay"];
+  
+  if ( !data.name || data.name.trim().length === 0 ){
+    errors.push('姓名不可為空');
+  }
+
+  if ( !data.address || data.address.trim().length === 0 ){
+    errors.push('地址不可為空');
+  }
+
+  if ( !telRegex.test(data.tel) ){
+    errors.push('電話必須是 09 開頭的 10 位數字');
+  }
+
+  if ( !emailRegex.test(data.email)){
+    errors.push('email 必須包含 @ 符號');
+  }
+
+  if (!validPayments.includes(data.payment)) {
+    errors.push("付款方式必須是 'ATM', 'Credit Card', 'Apple Pay' 其中之一");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors 
+  };
 }
 
 /**
@@ -111,6 +140,19 @@ function validateOrderUser(data) {
  */
 function validateCartQuantity(quantity) {
   // 請實作此函式
+  if ( !Number.isInteger(quantity)){
+    return { isValid: false, error: '數量必須是正整數' };
+  }
+
+  if ( quantity < 1 ){
+    return { isValid: false, error: '數量不可小於 1' };
+  }
+
+  if ( quantity > 99 ){
+    return { isValid: false, error: '數量不可大於 99 ' };
+  }
+
+  return { isValid: true };
 }
 
 // ========================================
