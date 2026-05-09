@@ -239,7 +239,7 @@ async function addToCartWithAxios(productId, quantity) {
 async function getOrdersWithAxios() {
   // 請實作此函式
   // 提示：axios.get(url, { headers: { authorization: token } })
-  const response = await axios.get(`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`,
+   const response = await axios.get(`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`,
     {
       headers:{
         Authorization: ADMIN_TOKEN,
@@ -252,15 +252,15 @@ async function getOrdersWithAxios() {
 /*
 比較題：請說明 fetch 和 axios 的主要差異
 
-1.
+1. JSON 解析
 fetch 需要手動使用 response.json() 解析 JSON；
 axios 會自動解析 JSON，資料可以直接從 response.data 取得
 
-2.
-fetch 發送 POST / PATCH 時，通常需要手動設定 headers，例如 Content-Type；
-application/json；axios 會自動處理常見的 JSON headers
+2. Request 設定
+fetch 發送 POST / PATCH 時，通常需要手動設定 headers，例如 Content-Type、application/json；
+axios 會自動處理常見的 JSON headers
 
-3.
+3. 錯誤處理
 fetch 遇到 400、404、500 這類 HTTP 錯誤時，不會自動進入 catch，需要自己判斷 response.ok；
 axios 遇到非 2xx 狀態碼時，會自動進入 catch
 
@@ -284,6 +284,15 @@ const OrderService = {
    */
   async fetchOrders() {
     // 請實作此函式
+    const response = await axios.get(
+      `${this.baseURL}/api/livejs/v1/admin/${this.apiPath}/orders`,
+      {
+        headers: {
+          Authorization: this.token,
+        },
+      }
+    );
+    return response.data.orders;
   },
 
   /**
@@ -293,6 +302,12 @@ const OrderService = {
    */
   formatOrders(orders) {
     // 請實作此函式
+    return orders.map( order => {
+      return {
+        ...order,
+        formattedDate: dayjs.unix(order.createdAt).format("YYYY/MM/MM HH:mm"), 
+      };
+    }); 
   },
 
   /**
@@ -302,6 +317,7 @@ const OrderService = {
    */
   filterUnpaidOrders(orders) {
     // 請實作此函式
+    return orders.filter((order) => !order.paid);
   },
 
   /**
@@ -414,11 +430,32 @@ if (require.main === module) {
       //   console.log('addToCartWithAxios  錯誤:', error.message);
       // }
 
-       try {
-        const result = await getOrdersWithAxios();
-        console.log('getOrdersWithAxios:', result );
+      //  try {
+      //   const result = await getOrdersWithAxios();
+      //   console.log('getOrdersWithAxios:', result );
+      // } catch (error) {
+      //   console.log('getOrdersWithAxios   錯誤:', error.message);
+      // }
+
+      // try {
+      //   const result = await OrderService.fetchOrders();
+      //   console.log('fetchOrders:', result );
+      // } catch (error) {
+      //   console.log('fetchOrders   錯誤:', error.message);
+      // }
+
+      // try {
+      //   const result = await OrderService.formatOrders(testOrders);
+      //   console.log('formatOrders:', result );
+      // } catch (error) {
+      //   console.log('formatOrders   錯誤:', error.message);
+      // }
+
+      try {
+        const result = await OrderService.filterUnpaidOrders(testOrders);
+        console.log('filterUnpaidOrders:', result );
       } catch (error) {
-        console.log('getOrdersWithAxios   錯誤:', error.message);
+        console.log('filterUnpaidOrders    錯誤:', error.message);
       }
 
     } else {
